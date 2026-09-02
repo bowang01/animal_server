@@ -1,4 +1,4 @@
-name: Deploy backend to Hostinger VPS
+name: Deploy backend to Hostinger Docker Manager
 
 on:
   push:
@@ -10,46 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Deploy to Hostinger
+        uses: hostinger/deploy-on-vps@v2
         with:
-          distribution: temurin
-          java-version: 8
-          cache: maven
-
-      - name: Build jar
-        run: mvn -B -DskipTests package
-
-      - name: Prepare remote directory
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            mkdir -p /opt/animal/server/uploads
-            chown -R animal:animal /opt/animal/server || true
-
-      - name: Upload jar
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          source: target/app.jar
-          target: /opt/animal/server
-          strip_components: 1
-          overwrite: true
-
-      - name: Restart service
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            chown animal:animal /opt/animal/server/app.jar
-            systemctl restart animal-server
-            systemctl --no-pager --full status animal-server
+          api-key: ${{ secrets.HOSTINGER_API_KEY }}
+          virtual-machine: ${{ vars.HOSTINGER_VM_ID }}
+          project-name: animal-server
+          docker-compose-path: docker-compose.yml
+          environment-variables: |
+            MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD || 'animal_db_pass' }}
+            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD || 'animal_root_pass' }}

@@ -1,0 +1,42 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: animal-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: db_animal
+      MYSQL_USER: animal
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-animal_db_pass}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-animal_root_pass}
+    volumes:
+      - animal-mysql-data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uanimal", "-p${MYSQL_PASSWORD:-animal_db_pass}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  backend:
+    build: .
+    container_name: animal-server
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:19090:9090"
+    environment:
+      SERVER_PORT: 9090
+      SERVER_ADDRESS: 0.0.0.0
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_animal?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: animal
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-animal_db_pass}
+      FILES_UPLOAD_PATH: /data/uploads/
+      FILES_ACCESS_BASE_URL: /api
+    volumes:
+      - animal-uploads:/data/uploads
+
+volumes:
+  animal-mysql-data:
+  animal-uploads:

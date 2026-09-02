@@ -1,0 +1,12 @@
+target
+.git
+.github
+.idea
+.vscode
+*.md
+deploy
+uploads
+file
+.env
+.env.*
+!.env.example
