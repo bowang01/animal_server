@@ -1,0 +1,19 @@
+[Unit]
+Description=Animal Spring Boot backend
+After=network.target mysql.service docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=animal
+Group=animal
+WorkingDirectory=/opt/animal/server
+EnvironmentFile=/opt/animal/server/.env
+ExecStart=/usr/bin/java -jar /opt/animal/server/app.jar
+SuccessExitStatus=143
+Restart=always
+RestartSec=5
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

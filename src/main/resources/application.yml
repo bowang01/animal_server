@@ -1,12 +1,13 @@
 server:
-  port: 9090
+  port: ${SERVER_PORT:9090}
+  address: ${SERVER_ADDRESS:0.0.0.0}
 
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/db_animal?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true
-    username: root
-    password: root
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/db_animal?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
   servlet:
     multipart:
       max-file-size: 100MB
@@ -21,5 +22,6 @@ mybatis-plus:
 
 files:
   upload:
-    path: D:/file/
+    path: ${FILES_UPLOAD_PATH:D:/file/}
+  access-base-url: ${FILES_ACCESS_BASE_URL:http://localhost:9090}
 

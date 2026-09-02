@@ -31,6 +31,9 @@ public class FileController {
     @Value("${files.upload.path}")
     private String fileUploadPath;
 
+    @Value("${files.access-base-url:http://localhost:9090}")
+    private String fileAccessBaseUrl;
+
     @Resource
     private FileMapper fileMapper;
 
@@ -67,7 +70,10 @@ public class FileController {
             // Upload file to disk
             file.transferTo(uploadFile);
             // Keep uploaded file when no duplicate exists in DB
-            url = "http://localhost:9090/file/" + fileUUID;
+            String base = fileAccessBaseUrl.endsWith("/")
+                    ? fileAccessBaseUrl.substring(0, fileAccessBaseUrl.length() - 1)
+                    : fileAccessBaseUrl;
+            url = base + "/file/" + fileUUID;
         }
 
 
