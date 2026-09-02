@@ -29,9 +29,25 @@ public class JwtInterceptor implements HandlerInterceptor {
             token = request.getParameter("token");
         }
         // Skip if handler is not a method
-        if(handler instanceof HandlerMethod) {
+/*        if(handler instanceof HandlerMethod) {
             AuthAccess annotation = ((HandlerMethod) handler).getMethodAnnotation(AuthAccess.class);
             if (annotation != null) {
+                return true;
+            }
+        }*/
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+
+            AuthAccess annotation =
+                    handlerMethod.getMethodAnnotation(AuthAccess.class);
+
+            System.out.println("========== JWT DEBUG ==========");
+            System.out.println("Request URI: " + request.getRequestURI());
+            System.out.println("Handler: " + handlerMethod.getMethod());
+            System.out.println("AuthAccess: " + annotation);
+
+            if (annotation != null) {
+                System.out.println("========== SKIP JWT ==========");
                 return true;
             }
         }

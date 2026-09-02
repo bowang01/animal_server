@@ -45,6 +45,7 @@ public class UserController {
     @Resource
     private IUserService userService;
 
+    @AuthAccess
     @PostMapping("/login")
     public Result login(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();
@@ -56,6 +57,7 @@ public class UserController {
         return Result.success(dto);
     }
 
+    @AuthAccess
     @PostMapping("/register")
     public Result register(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();

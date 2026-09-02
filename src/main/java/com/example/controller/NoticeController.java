@@ -9,6 +9,7 @@ import javax.servlet.ServletOutputStream;
 import java.net.URLEncoder;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.Result;
+import com.example.config.interceptor.AuthAccess;
 import com.example.entity.User;
 import com.example.service.INoticeService;
 import com.example.utils.TokenUtils;
@@ -59,6 +60,7 @@ public class NoticeController {
         return Result.success();
     }
 
+    @AuthAccess
     @GetMapping("/front")
     public Result front() {
         return Result.success(noticeService.limit(5));
