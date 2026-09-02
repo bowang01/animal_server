@@ -36,6 +36,14 @@ services:
       FILES_ACCESS_BASE_URL: /api
     volumes:
       - animal-uploads:/data/uploads
+    networks:
+      - default
+      - proxy
+
+networks:
+  proxy:
+    name: proxy
+    external: true
 
 volumes:
   animal-mysql-data:
